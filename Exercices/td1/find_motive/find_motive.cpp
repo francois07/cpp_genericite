@@ -47,5 +47,7 @@ int find_motive(std::string inFilePath, std::string motive)
     }
   }
 
+  inFile.close();
+
   return motiveCount;
 }
