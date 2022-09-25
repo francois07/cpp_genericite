@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.0)
 
-project(is_prime)
+project(is_prime_project)
 
-add_library(mysource SHARED is_prime.cpp)
+add_library(isprime SHARED is_prime.cpp)
 
 add_executable(main main.cpp)
 
-target_link_libraries(main mysource)
+target_link_libraries(main isprime)
