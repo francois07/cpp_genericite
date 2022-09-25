@@ -1,7 +1,6 @@
 #include "is_prime.h"
 #include <cmath>
 
-int i = 0;
 bool is_prime(int k)
 {
     if (k <= 1)
