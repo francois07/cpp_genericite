@@ -1,8 +1,6 @@
 #include "vector.hh"
+#include <iostream>
 
-Vector::Vector()
-{
-}
 
 Vector::Vector(std::initializer_list<value> l)
 {
@@ -19,54 +17,135 @@ Vector::Vector(std::initializer_list<value> l)
     }
 }
 
+Vector::Vector()
+{
+    for (int i = 0; i < NDIM; i++)
+    {
+        this->coords_[i] = 0;
+    }
+}
+
 Vector &Vector::operator+=(const Vector &v)
 {
-    this->u_ += v.u_;
-    this->v_ += v.v_;
+    for(int i=0; i < NDIM; i++)
+    {
+        this->coords_[i] += v.coords_[i];
+    }
 
     return *this;
 }
 
-Vector &Vector::operator+(const Vector &v)
+Vector Vector::operator+(const Vector &v)
 {
-    return Vector{this->u_ + v.u_, this->v_ + v.v_};
+    auto newVec = Vector{};
+
+    for(int i=0; i < NDIM; i++)
+    {
+        newVec.coords_[i] = this->coords_[i] + v.coords_[i];
+        std::cout << this->coords_[i] << " + " << v.coords_[i] << " = " << newVec.coords_[i] << std::endl;
+    }
+
+    return newVec;
 }
 
 Vector &Vector::operator-=(const Vector &v)
 {
-    this->u_ -= v.u_;
-    this->v_ -= v.v_;
+    for(int i=0; i < NDIM; i++)
+    {
+        this->coords_[i] -= v.coords_[i];
+    }
 
     return *this;
 }
 
-Vector &Vector::operator-(const Vector &v)
+Vector Vector::operator-(const Vector &v)
 {
-    return Vector{this->u_ - v.u_, this->v_ - v.v_};
+    auto newVec = Vector{};
+
+    for(int i=0; i < NDIM; i++)
+    {
+        newVec.coords_[i] = this->coords_[i] - v.coords_[i];
+    }
+
+    return newVec;
 }
 
 value Vector::operator*(const Vector &v)
 {
-    return (this->u_ * v.u_) + (this->v_ * v.v_);
+    value dotProduct = 0;
+
+    for(int i = 0; i < NDIM; i++)
+    {
+        dotProduct += this->coords_[i] * v.coords_[i];
+    }
+
+    return dotProduct;
 }
 
 Vector &Vector::operator*=(const value &k)
 {
-    this->u_ *= k;
-    this->v_ *= k;
+    for(int i = 0; i < NDIM; i++)
+    {
+        this->coords_[i] *= k;
+    }
 
     return *this;
 }
 
-Vector &Vector::operator*(const value &k)
+Vector Vector::operator*(const value &k)
 {
-    return Vector{this->u_ * k, this->v_ * k};
+    auto newVec = Vector{};
+
+    for(int i=0; i < NDIM; i++)
+    {
+        newVec.coords_[i] = this->coords_[i] * k;
+    }
+
+    return newVec;
 }
 
 Vector &Vector::operator+=(const value &k)
 {
-    this->u_ += k;
-    this->v_ += k;
+    for(int i = 0; i < NDIM; i++)
+    {
+        this->coords_[i] += k;
+    }
 
     return *this;
+}
+
+Vector Vector::operator+(const value &k)
+{
+    auto newVec = Vector{};
+
+    for(int i=0; i < NDIM; i++)
+    {
+        newVec.coords_[i] = this->coords_[i] + k;
+    }
+
+    return newVec;
+}
+
+value &Vector::operator[](int idx)
+{
+    return this->coords_[idx];
+}
+
+const value &Vector::operator[](int idx) const{
+    return this->coords_[idx];
+};
+
+
+std::ostream &operator<<(std::ostream &os, const Vector& v)
+{
+    os << "[";
+
+    for(int i = 0; i < NDIM - 1; i++)
+    {
+        os << v[i] << ',';
+    }
+
+    os << v[NDIM - 1] << "]";
+
+    return os;
 }

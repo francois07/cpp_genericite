@@ -22,27 +22,30 @@ public:
 
     // Public Member functions here
     Vector &operator+=(const Vector &v);
-    Vector &operator+(const Vector &v);
+    Vector operator+(const Vector &v);
 
     Vector &operator-=(const Vector &v);
-    Vector &operator-(const Vector &v);
+    Vector operator-(const Vector &v);
 
-    value operator*=(const Vector &v);
+    value &operator*=(const Vector &v);
     value operator*(const Vector &v);
 
     Vector &operator*=(const value &k);
-    Vector &operator*(const value &k);
+    Vector operator*(const value &k);
 
     Vector &operator+=(const value &k);
-    float &operator[](const value &k);
+    Vector operator+(const value &k);
+
+    value &operator[](int idx);
+    const value &operator[](int idx) const;
     // More to go
 
 private:
     // Private Member functions here
-    value coords_[];
+    value coords_[NDIM];
     // Member variables are ALWAYS private, and they go here
 };
 
 // Nonmember function operators go here
-std::ostream &operator<<(const std::ostream &os, const Vector &rhs);
-value &operator+=(const value k, const Vector &v);
+std::ostream &operator<<(std::ostream &os, const Vector& v);
+// value &operator+=(const value k, const Vector &v);
