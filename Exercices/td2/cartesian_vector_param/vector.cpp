@@ -1,6 +1,4 @@
 #include "vector.hh"
-#include <iostream>
-
 
 Vector::Vector(std::initializer_list<value> l)
 {
@@ -42,7 +40,6 @@ Vector Vector::operator+(const Vector &v)
     for(int i=0; i < NDIM; i++)
     {
         newVec.coords_[i] = this->coords_[i] + v.coords_[i];
-        std::cout << this->coords_[i] << " + " << v.coords_[i] << " = " << newVec.coords_[i] << std::endl;
     }
 
     return newVec;
