@@ -1,1 +1,3 @@
-test este testest tost awirtjweiotghwete teiostjtestsioetjstest weoiryhutwetestewiot
+The goal of this exercise is to create a program which takes the path of a textfile
+as input and counts the number of words containing a given motive (the second argument)
+at least once.

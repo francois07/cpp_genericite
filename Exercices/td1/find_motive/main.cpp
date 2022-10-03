@@ -1,6 +1,6 @@
 #include <iostream>
 #include <fstream>
-#include "find_motive.h"
+#include "find_motive.hh"
 
 int main(int argc, char *argv[])
 {

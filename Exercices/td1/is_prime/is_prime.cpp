@@ -1,4 +1,4 @@
-#include "is_prime.h"
+#include "is_prime.hh"
 #include <cmath>
 
 bool is_prime(int k)

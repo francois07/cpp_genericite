@@ -1,14 +1,13 @@
 #include <iostream>
-#include "is_prime.h"
+#include "is_prime.hh"
 
 int main()
 {
     int i;
 
-    std::cout << "Please input a number: ";
     while (std::cin >> i)
     {
-        std::cout << "The number " << i << " is prime: " << std::boolalpha << is_prime(i) << std::endl;
+        std::cout << i << " is a prime: " << std::boolalpha << is_prime(i) << std::endl;
     }
 
     return 0;

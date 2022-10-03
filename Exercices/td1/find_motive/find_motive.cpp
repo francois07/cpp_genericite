@@ -1,4 +1,4 @@
-#include "find_motive.h"
+#include "find_motive.hh"
 #include <iostream>
 #include <fstream>
 
