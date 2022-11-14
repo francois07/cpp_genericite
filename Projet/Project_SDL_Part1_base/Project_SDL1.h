@@ -51,6 +51,8 @@ public:
 
   virtual void move(){}; // todo: Animals move around, but in a different
                          // fashion depending on which type of animal
+  int get_x_pos() const { return x_pos_; };
+  int get_y_pos() const { return y_pos_; };
 };
 
 // Insert here:
@@ -82,11 +84,13 @@ public:
   // implement functions that are purely virtual in base class
   void move();
 
-  int get_target_x();
-  int get_target_y();
+  int get_target_x() const { return target_x_; };
+  int get_target_y() const { return target_y_; };
 
-  void set_target_y(int x);
-  void set_target_y(int y);
+  void set_target_x(int x) { this->target_x_ = x; };
+  void set_target_y(int y) { this->target_y_ = y; };
+
+  int find_closest_sheep(std::vector<std::shared_ptr<animal>> animals) const;
 
 private:
   int target_x_;

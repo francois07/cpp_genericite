@@ -9,6 +9,7 @@
 #include <numeric>
 #include <random>
 #include <string>
+#include <cmath>
 
 #define WINDOW_HEIGHT 480
 #define WINDOW_WIDTH 640
@@ -45,17 +46,16 @@ namespace
 
     return surface;
   }
-
 } // namespace
 
 animal::animal(const std::string &file_path, SDL_Surface *window_surface_ptr)
     : image_ptr_{load_surface_for(file_path, window_surface_ptr)},
       window_surface_ptr_{window_surface_ptr},
-      x_vel_{1},
-      y_vel_{1}
+      x_pos_{std::rand() % (WINDOW_WIDTH - TEXTURE_SIZE)},
+      y_pos_{std::rand() % (WINDOW_HEIGHT - TEXTURE_SIZE)},
+      x_vel_{std::rand() % 5},
+      y_vel_{std::rand() % 5}
 {
-  this->x_pos_ = std::rand() % (WINDOW_WIDTH - TEXTURE_SIZE);
-  this->y_pos_ = std::rand() % (WINDOW_HEIGHT - TEXTURE_SIZE);
   this->draw(window_surface_ptr);
 };
 // todo: The constructor has to load the sdl_surface that corresponds to the
@@ -81,6 +81,8 @@ void animal::draw(SDL_Surface *window_surface_ptr)
 
 sheep::sheep(const std::string &file_path, SDL_Surface *window_surface_ptr) : animal{file_path, window_surface_ptr}
 {
+  this->x_vel_ = 2;
+  this->y_vel_ = 2;
 }
 // Dtor
 sheep::~sheep()
@@ -105,25 +107,42 @@ void sheep::move()
 
 wolf::wolf(const std::string &file_path, SDL_Surface *window_surface_ptr) : animal{file_path, window_surface_ptr}
 {
+  this->x_vel_ = 2;
+  this->y_vel_ = 2;
 }
 // Dtor
 wolf::~wolf() {}
 // implement functions that are purely virtual in base class
 void wolf::move()
 {
-  this->x_pos_ += 2 * this->x_vel_;
-  this->y_pos_ += 2 * this->y_vel_;
+  this->x_pos_ += (this->target_x_ - this->x_pos_) < 0 ? -this->x_vel_ : this->x_vel_; 
+  this->y_pos_ += (this->target_y_ - this->y_pos_) < 0 ? -this->y_vel_ : this->y_vel_; 
+} // todo: Animals move around, but in a different
+  // fashion depending on which type of animal
 
-  if (x_pos_ > WINDOW_WIDTH - TEXTURE_SIZE || x_pos_ < 0)
+int wolf::find_closest_sheep(std::vector<std::shared_ptr<animal>> animals) const
+{
+  int closest_sheep_idx = -1;
+  int closest_sheep_dist = (int)INFINITY;
+
+  for (int i = 0; i < animals.size(); i++)
   {
-    x_vel_ = -x_vel_;
+    if (sheep *sheep_cast = dynamic_cast<sheep *>(animals[i].get()))
+    {
+      int dist_x = abs(this->x_pos_ - sheep_cast->get_x_pos());
+      int dist_y = abs(this->y_pos_ - sheep_cast->get_y_pos());
+      int dist_2d = sqrt(dist_x * dist_x + dist_y * dist_y);
+
+      if (dist_2d < closest_sheep_dist)
+      {
+        closest_sheep_dist = dist_2d;
+        closest_sheep_idx = i;
+      }
+    }
   }
-  if (y_pos_ > WINDOW_HEIGHT - TEXTURE_SIZE || y_pos_ < 0)
-  {
-    y_vel_ = -y_vel_;
-  }
-}; // todo: Animals move around, but in a different
-   // fashion depending on which type of animal
+
+  return closest_sheep_idx;
+}
 
 /* Ground */
 ground::ground(SDL_Surface *window_surface_ptr) : window_surface_ptr_{window_surface_ptr}
@@ -133,7 +152,6 @@ ground::ground(SDL_Surface *window_surface_ptr) : window_surface_ptr_{window_sur
 void ground::add_animal(std::shared_ptr<animal> a)
 {
   this->animals_.push_back(a);
-  std::cout << this->animals_.size() << std::endl;
 }
 
 void ground::update()
@@ -143,6 +161,19 @@ void ground::update()
   {
     a->move();
     a->draw(window_surface_ptr_);
+
+    if (wolf *wolf_cast = dynamic_cast<wolf *>(a.get()))
+    {
+      int closest_sheep_idx = wolf_cast->find_closest_sheep(this->animals_);
+
+      if(closest_sheep_idx != -1)
+      {
+        auto closest_sheep = this->animals_[closest_sheep_idx];
+
+        wolf_cast->set_target_x(closest_sheep->get_x_pos());
+        wolf_cast->set_target_y(closest_sheep->get_y_pos());
+      }
+    };
   }
 }
 
@@ -168,6 +199,8 @@ application::application(unsigned n_sheep, unsigned n_wolf)
   for (int i = 0; i < n_wolf_; i++)
   {
     std::shared_ptr<animal> a_ptr = std::make_shared<wolf>("../media/wolf.png", this->window_surface_ptr_);
+
+    std::cout << "Spawned wolf at position x=" << a_ptr->get_x_pos() << " y=" << a_ptr->get_y_pos() << "\n";
 
     this->ground_.add_animal(a_ptr);
   }
